@@ -6,6 +6,7 @@
 
 #include "Vex_Competition_Includes.c"   // Main competition background code
 #include "sensors.c" // Sensor methods
+#include "lcd.c" // LCD methods
 
 // ##################
 // # Pre Autonomous #
@@ -13,7 +14,7 @@
 
 void pre_auton()
 {
-
+	bLCDBacklight = true;
 }
 
 // ##############
@@ -34,7 +35,14 @@ task usercontrol()
 	// Main loop
 	while(true)
 	{
-		updateBatteryIndicators(); // Update battery lights
+		// Check lcd buttons
+		if (nLCDButtons == 1) { // Left button pressed
+			lcdNextPage();
+			} else if (nLCDButtons == 2) { // Center button pressed
+			lcdHome();
+			} else if (nLCDButtons == 4) { // Right button pressed
+			lcdLastPage();
+		}
 		break; // TODO: Remove
 	}
 }
