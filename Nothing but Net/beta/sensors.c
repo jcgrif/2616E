@@ -12,7 +12,7 @@
 // Gets the cortex battery level as a percentage
 float getCortexBatteryLevel()
 {
-	return (nAvgBatteryLevel/1000)/7.2;;
+	return ((nAvgBatteryLevel/1000)/7.2);
 }
 
 // Gets the cortex battery status (Defined above)

@@ -23,7 +23,7 @@ void pre_auton()
 
 task autonomous()
 {
-
+	// TODO: Make me :D
 }
 
 // ################
@@ -37,11 +37,11 @@ task usercontrol()
 	{
 		// Check lcd buttons
 		if (nLCDButtons == 1) { // Left button pressed
-			lcdNextPage();
+			lcdLstPage();
 			} else if (nLCDButtons == 2) { // Center button pressed
 			lcdHome();
 			} else if (nLCDButtons == 4) { // Right button pressed
-			lcdLastPage();
+			lcdNextPage();
 		}
 		break; // TODO: Remove
 	}
