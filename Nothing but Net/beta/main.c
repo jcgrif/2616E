@@ -36,23 +36,40 @@ task usercontrol()
 	startTask( lcdRunAutoRefresh );
 	// Main loop
 	bool buttonReleased = true;
+	int highestCombination = 0;
 	while(true)
 	{
 		// Check lcd buttons
-		if (nLCDButtons == 0) { // Left button pressed
-			buttonReleased = true;
-		} else
-		if (buttonReleased) {
+		if (nLCDButtons == 0) { // A button wasn't pressed
+			if (buttonReleased == false) {
+				// Button was pressed then released, calculate what to do
+				if (highestCombination == 1) { // Left button pressed
+					lcdLastPage();
+					buttonReleased = false;
+				}
+				else
+					if (highestCombination == 2) { // Center button pressed
+					lcdHome();
+					buttonReleased = false;
+				}
+				else
+					if (highestCombination == 4) { // Right button pressed
+					lcdNextPage();
+					buttonReleased = false;
+				}
+				buttonReleased = true;
+				highestCombination = 0;
+			} // Else: Nothing was pressed
+		}
+		else // A button was pressed
+		{
 			lcdResetAutoRefresh();
-			if (nLCDButtons == 1) { // Left button pressed
-				lcdLastPage();
+			if (buttonReleased) {
 				buttonReleased = false;
-				} else if (nLCDButtons == 2) { // Center button pressed
-				lcdHome();
-				buttonReleased = false;
-				} else if (nLCDButtons == 4) { // Right button pressed
-				lcdNextPage();
-				buttonReleased = false;
+			}
+
+			if (nLCDButtons > highestCombination) {
+				highestCombination = nLCDButtons;
 			}
 		}
 	}
