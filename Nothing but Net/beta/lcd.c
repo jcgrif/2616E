@@ -1,7 +1,16 @@
+// Page vars
 int currentPage = 1;
 int minPage = 1;
-int maxPage = 2;
+int maxPage = 3;
+
+// Data vars
 int secondsSinceRefresh = 0;
+float holdDownTime = 0.0;
+
+// Menu vars
+int autoMode = getAutonomousMode();
+int autoMin = 1;
+int autoMax = 3;
 
 // TODO: Create task to update page every 5 seconds if page not changed?
 void lcdUpdatePage()
@@ -9,14 +18,18 @@ void lcdUpdatePage()
 	clearLCDLine(0);
 	clearLCDLine(1);
 	// Pages are defined here. Messy, but it works.
-	if (currentPage == 1) { // General status
+
+	// General status
+	if (currentPage == 1) {
 		displayLCDString(0,6,"Home");
 		if ((getBackupBatteryStatus() >= 2) || (getCortexBatteryStatus() >= 2) || (getCortexBatteryStatus() >= 2)) { // Battery page needs attention
 			displayLCDChar(1,0,'!');
 		}
 		displayLCDString(1,1,"Bat");
 	}
-	else if (currentPage == 2) { // Battery status
+
+	// Battery status
+	else if (currentPage == 2) {
 		displayLCDString(0,0,"BatStat|");
 		if (getBackupBatteryStatus() >= 2) { // Backup bat needs attention
 			displayLCDChar(0,8,'!');
@@ -49,6 +62,18 @@ void lcdUpdatePage()
 		// Displaying expander status
 		displayLCDString(1,9,expanderText);
 	}
+
+	// Autonomous Selector
+	else if (currentPage == 3) {
+		displayLCDCenteredString(0, "Autonomous");
+		if (autoMode == 1) {
+			displayLCDCenteredString(1, "< Mode 1 >");
+			} else if (autoMode == 2) {
+			displayLCDCenteredString(1, "< Mode 2 >");
+			}else if (autoMode == 3) {
+			displayLCDCenteredString(1, "< Mode 3 >");
+		}
+	}
 }
 
 void lcdHome()
@@ -77,6 +102,32 @@ void lcdLastPage()
 	lcdUpdatePage();
 }
 
+void lcdNext() {
+	// Autonomous selector
+	if (currentPage == 3) {
+		if (autoMode > autoMin) {
+			autoMode -= 1;
+			} else {
+			autoMode = autoMax;
+		}
+		setAutonomousMode(autoMode);
+		lcdUpdatePage();
+	}
+}
+
+void lcdBack() {
+	// Autonomous selector
+	if (currentPage == 3) {
+		if (autoMode < autoMax) {
+			autoMode += 1;
+			} else {
+			autoMode = autoMin;
+		}
+		setAutonomousMode(autoMode);
+		lcdUpdatePage();
+	}
+}
+
 void lcdResetAutoRefresh() {
 	secondsSinceRefresh = 0;
 }
@@ -91,5 +142,16 @@ task lcdRunAutoRefresh() {
 			lcdUpdatePage();
 			lcdResetAutoRefresh();
 		}
+	}
+}
+
+void lcdResetHoldTime() {
+	holdDownTime = 0.0;
+}
+
+task countHoldTime() {
+	while (true) {
+		holdDownTime += 0.1;
+		wait1Msec(100);
 	}
 }

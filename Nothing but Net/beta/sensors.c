@@ -19,7 +19,7 @@ float getCortexBatteryLevel()
 int getCortexBatteryStatus()
 {
 	float cortexBatteryPercentage = getCortexBatteryLevel();
-	if (cortexBatteryPercentage > 100) { // TODO Change to dangerous level, not just over 100
+	if (cortexBatteryPercentage >= 106) {
 		return 3;
 		} else {
 		if (cortexBatteryPercentage <= 50) {
@@ -44,7 +44,7 @@ float getBackupBatteryLevel()
 int getBackupBatteryStatus()
 {
 	float backupBatteryPercentage = getBackupBatteryLevel();
-	if (backupBatteryPercentage > 100) { // TODO Change to dangerous level, not just over 100
+	if (backupBatteryPercentage >= 106) {
 		return 3;
 		} else {
 		if (backupBatteryPercentage <= 50) {
@@ -62,14 +62,14 @@ int getBackupBatteryStatus()
 // Gets the expander battery level as a percentage
 float getExpanderBatteryLevel()
 {
-	return 100; // TODO Return actual value
+	return (SensorValue[powerExpander]/2053.0)*100.0; // TODO Return actual value
 }
 
 // Gets the expander battery status (Defined above)
 int getExpanderBatteryStatus()
 {
 	float expanderBatteryPercentage = getExpanderBatteryLevel();
-	if (expanderBatteryPercentage > 100) { // TODO Change to dangerous level, not just over 100
+	if (expanderBatteryPercentage >= 106) {
 		return 3;
 		} else {
 		if (expanderBatteryPercentage <= 50) {
