@@ -21,8 +21,8 @@ void lcdUpdatePage()
 
 	// General status
 	if (currentPage == 1) {
-		displayLCDString(0,6,"Home");
-		if ((getBackupBatteryStatus() >= 2) || (getCortexBatteryStatus() >= 2) || (getCortexBatteryStatus() >= 2)) { // Battery page needs attention
+		displayLCDCenteredString(0,"2616E Equinox");
+		if ((getBackupBatteryStatus() >= 2) || (getCortexBatteryStatus() >= 2) || (getExpanderBatteryStatus() >= 2)) { // Battery page needs attention
 			displayLCDChar(1,0,'!');
 		}
 		displayLCDString(1,1,"Bat");
