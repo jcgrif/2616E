@@ -34,7 +34,7 @@ void runCalculation() {
 	else
 		x1 = 0;
 	if (abs(vexRT[Ch1]) > threshold)
-		x2 = vexRT[Ch1];
+		x2 = floor(((float) vexRT[Ch1]) * 1.5);
 	else
 		x2 = 0;
 
