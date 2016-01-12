@@ -4,7 +4,7 @@ int highestCombination = 0;
 
 int controllerLCDButtons() {
 	int total = 0;
-	if (vexRT[Btn5D] == false) {
+	if (!vexRT[Btn5U]) {
 		buttonReleased = true;
 		return 0;
 	}
@@ -19,22 +19,25 @@ int controllerLCDButtons() {
 
 void runCalculation() {
 	// Driver motion control
-	float multiplier = 0.5;
-	if (vexRT[Btn6U]) {
-		multiplier = 0.25;
-		} else if (vexRT[Btn6D]) {
-		multiplier = 1;
+	float driveMultiplier = 1;
+	float turnMultiplier = 1.5
+	if (vexRT[Btn6D]) {
+		driveMultiplier = 0.25;
+		turnMultiplier =  0.75
+	} else if (vexRT[Btn6U]) {
+		driveMultiplier = 0.5;
+		turnMultiplier = 1;
 	}
 	if(abs(vexRT[Ch3]) > threshold)
-		y1 = vexRT[Ch3];
+		y1 = floor(((float) vexRT[Ch3]) * driveMultiplier);
 	else
 		y1 = 0;
 	if (abs(vexRT[Ch4]) > threshold)
-		x1 = vexRT[Ch4];
+		x1 = floor(((float) vexRT[Ch4]) * driveMultiplier);
 	else
 		x1 = 0;
 	if (abs(vexRT[Ch1]) > threshold)
-		x2 = floor(((float) vexRT[Ch1]) * 1.5);
+		x2 = floor(((float) vexRT[Ch1]) * turnMultiplier);
 	else
 		x2 = 0;
 
@@ -86,4 +89,15 @@ void runCalculation() {
 			highestCombination = controllerButtons;
 		}
 	}
+
+	// Arm control
+	int armSpeed = 0;
+	if (vexRT[Btn7D]) {
+		armSpeed = 127;
+	}
+	motor[motorLauncherOne] = armSpeed;
+	motor[motorLauncherTwo] = armSpeed;
+	motor[motorLauncherThree] = armSpeed;
+	motor[motorLauncherFour] = armSpeed;
+	motor[motorLauncherFive] = armSpeed;
 }
