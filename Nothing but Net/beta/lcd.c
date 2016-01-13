@@ -1,7 +1,7 @@
 // Page vars
 int currentPage = 1;
 int minPage = 1;
-int maxPage = 3;
+int maxPage = 4;
 
 // Data vars
 int secondsSinceRefresh = 0;
@@ -67,12 +67,18 @@ void lcdUpdatePage()
 	else if (currentPage == 3) {
 		displayLCDCenteredString(0, "Autonomous");
 		if (autoMode == 1) {
-			displayLCDCenteredString(1, "< Mode 1 >");
+			displayLCDCenteredString(1, "< Normal >");
 			} else if (autoMode == 2) {
-			displayLCDCenteredString(1, "< Mode 2 >");
+			displayLCDCenteredString(1, "< Prog. Skills >");
 			}else if (autoMode == 3) {
-			displayLCDCenteredString(1, "< Mode 3 >");
+			displayLCDCenteredString(1, "< Example >");
 		}
+	}
+
+	// Autonomous Selector
+	else if (currentPage == 4) {
+		displayLCDString(0,0,strcat(strcat("Pot: ",valueToString(SensorValue[testPot])),"/4095"));
+		displayLCDString(1,0,strcat(strcat("Dist: ",valueToString(SensorValue[testDist])),"mm"));
 	}
 }
 

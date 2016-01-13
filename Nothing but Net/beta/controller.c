@@ -23,7 +23,7 @@ void runCalculation() {
 	float turnMultiplier = 1.5
 	if (vexRT[Btn6D]) {
 		driveMultiplier = 0.25;
-		turnMultiplier =  0.75
+		turnMultiplier =  0.75;
 	} else if (vexRT[Btn6U]) {
 		driveMultiplier = 0.5;
 		turnMultiplier = 1;
@@ -93,11 +93,11 @@ void runCalculation() {
 	// Arm control
 	int armSpeed = 0;
 	if (vexRT[Btn7D]) {
-		armSpeed = 127;
+		armSpeed = -127;
 	}
 	motor[motorLauncherOne] = armSpeed;
 	motor[motorLauncherTwo] = armSpeed;
-	motor[motorLauncherThree] = armSpeed;
-	motor[motorLauncherFour] = armSpeed;
-	motor[motorLauncherFive] = armSpeed;
+	//motor[motorLauncherThree] = armSpeed;
+	//motor[motorLauncherFour] = armSpeed;
+	//motor[motorLauncherFive] = armSpeed;
 }
