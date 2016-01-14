@@ -19,14 +19,14 @@ int controllerLCDButtons() {
 
 void runCalculation() {
 	// Driver motion control
-	float driveMultiplier = 1;
-	float turnMultiplier = 1.5
+	float driveMultiplier = -1;
+	float turnMultiplier = -1.5;
 	if (vexRT[Btn6D]) {
-		driveMultiplier = 0.25;
-		turnMultiplier =  0.75;
+		driveMultiplier = -0.25;
+		turnMultiplier =  -0.75;
 	} else if (vexRT[Btn6U]) {
-		driveMultiplier = 0.5;
-		turnMultiplier = 1;
+		driveMultiplier = -0.5;
+		turnMultiplier = -1;
 	}
 	if(abs(vexRT[Ch3]) > threshold)
 		y1 = floor(((float) vexRT[Ch3]) * driveMultiplier);
@@ -93,11 +93,11 @@ void runCalculation() {
 	// Arm control
 	int armSpeed = 0;
 	if (vexRT[Btn7D]) {
-		armSpeed = -127;
+		armSpeed = -63;
 	}
 	motor[motorLauncherOne] = armSpeed;
 	motor[motorLauncherTwo] = armSpeed;
-	//motor[motorLauncherThree] = armSpeed;
-	//motor[motorLauncherFour] = armSpeed;
+	motor[motorLauncherThree] = armSpeed;
+	motor[motorLauncherFour] = armSpeed;
 	//motor[motorLauncherFive] = armSpeed;
 }

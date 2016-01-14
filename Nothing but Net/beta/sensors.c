@@ -83,9 +83,3 @@ int getExpanderBatteryStatus()
 		}
 	}
 }
-
-string valueToString(float value) {
-	string final = "";
-	sprintf(final, "%f", value);
-	return final;
-}

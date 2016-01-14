@@ -75,10 +75,12 @@ void lcdUpdatePage()
 		}
 	}
 
-	// Autonomous Selector
+	// Motor position
 	else if (currentPage == 4) {
-		displayLCDString(0,0,strcat(strcat("Pot: ",valueToString(SensorValue[testPot])),"/4095"));
-		displayLCDString(1,0,strcat(strcat("Dist: ",valueToString(SensorValue[testDist])),"mm"));
+		displayLCDCenteredString(0,"Bar position");
+		string value;
+		sprintf(value, "%f", getBarPosition());
+		displayLCDString(1,0,value);
 	}
 }
 
@@ -144,7 +146,7 @@ task lcdRunAutoRefresh() {
 	{
 		wait1Msec(1000);
 		secondsSinceRefresh += 1;
-		if (secondsSinceRefresh >= 10) {
+		if (secondsSinceRefresh >= 1) { // TODO 5
 			lcdUpdatePage();
 			lcdResetAutoRefresh();
 		}
