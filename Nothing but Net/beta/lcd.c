@@ -1,7 +1,7 @@
 // Page vars
 int currentPage = 1;
 int minPage = 1;
-int maxPage = 4;
+int maxPage = 5;
 
 // Data vars
 int secondsSinceRefresh = 0;
