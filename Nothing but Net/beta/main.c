@@ -2,6 +2,8 @@
 #pragma config(Sensor, in1,    powerExpander,  sensorNone)
 #pragma config(Sensor, in2,    armPot,         sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  barLimit,       sensorDigitalIn)
+#pragma config(Sensor, dgtl2,  ledCanFire,     sensorDigitalOut)
+#pragma config(Sensor, dgtl3,  ledCannotFire,  sensorDigitalOut)
 #pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Motor,  port1,           motorBar,      tmotorVex393_HBridge, openLoop, driveLeft, encoderPort, I2C_1)
 #pragma config(Motor,  port2,           motorFrontLeft, tmotorVex393_MC29, openLoop)
@@ -30,6 +32,11 @@
 
 int firePosition;
 bool isFiring;
+
+bool canFire() {
+	return (!isFiring && isBarReady());
+}
+
 // ##################
 // # Pre Autonomous #
 // ##################
@@ -72,6 +79,15 @@ task usercontrol()
 	int highestCombination = 0;
 	while(true)
 	{
+		// LED indicators
+		if (canFire()) {
+			SensorValue[ledCanFire] = 1;
+			SensorValue[ledCannotFire] = 0;
+		}
+		else {
+			SensorValue[ledCanFire] = 0;
+			SensorValue[ledCannotFire] = 1;
+		}
 		// LCD Button Handling
 		if (nLCDButtons == 0) { // A button wasn't pressed
 			if (buttonReleased == false) {
@@ -120,9 +136,9 @@ task usercontrol()
 	}
 }
 
-bool canFire() {
-	return (!isFiring && isBarReady());
-}
+// ####################
+// # Launcher Methods #
+// ####################
 
 void setLauncherSpeed( int armSpeed ) {
 	motor[motorLauncherOne] = armSpeed;
