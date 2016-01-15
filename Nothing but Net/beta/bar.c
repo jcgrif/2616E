@@ -26,7 +26,7 @@ task updateBar() {
 			currentPosition += (ticks);
 		}
 		else
-		if (motorSpeed < 0) {
+			if (motorSpeed < 0) {
 			currentPosition -= (ticks);
 		}
 		else
@@ -47,8 +47,8 @@ void setSpeedRelative(int speed, float distance) {
 		speed = 127;
 	}
 	if (distance > 0) {
-			motor[motorBar] = -1*speed;
-			return;
+		motor[motorBar] = -1*speed;
+		return;
 	}
 	motor[motorBar] = speed;
 }

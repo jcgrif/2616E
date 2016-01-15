@@ -82,6 +82,14 @@ void lcdUpdatePage()
 		sprintf(value, "%f", getBarPosition());
 		displayLCDString(1,0,value);
 	}
+
+	// Motor position
+	else if (currentPage == 5) {
+		displayLCDCenteredString(0,"Pot position");
+		string value;
+		sprintf(value, "%f", SensorValue[armPot]);
+		displayLCDString(1,0,value);
+	}
 }
 
 void lcdHome()
@@ -144,9 +152,9 @@ task lcdRunAutoRefresh() {
 	lcdUpdatePage();
 	while (true)
 	{
-		wait1Msec(1000);
+		wait1Msec(100); // TODO Change to 1000
 		secondsSinceRefresh += 1;
-		if (secondsSinceRefresh >= 1) { // TODO 5
+		if (secondsSinceRefresh >= 5) {
 			lcdUpdatePage();
 			lcdResetAutoRefresh();
 		}

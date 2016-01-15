@@ -24,7 +24,7 @@ void runCalculation() {
 	if (vexRT[Btn6D]) {
 		driveMultiplier = -0.25;
 		turnMultiplier =  -0.75;
-	} else if (vexRT[Btn6U]) {
+		} else if (vexRT[Btn6U]) {
 		driveMultiplier = -0.5;
 		turnMultiplier = -1;
 	}
@@ -90,14 +90,41 @@ void runCalculation() {
 		}
 	}
 
+	// Intake control
+	int intakeSpeed = 0;
+	if (vexRT[Btn5U]) {
+		intakeSpeed = 127;
+	}
+	else
+		if (vexRT[Btn5D]) {
+		intakeSpeed = -127;
+	}
+	motor[motorIntake] = intakeSpeed;
+
+
 	// Arm control
 	int armSpeed = 0;
 	if (vexRT[Btn7D]) {
-		armSpeed = -63;
+		armSpeed = 63;
 	}
 	motor[motorLauncherOne] = armSpeed;
 	motor[motorLauncherTwo] = armSpeed;
 	motor[motorLauncherThree] = armSpeed;
 	motor[motorLauncherFour] = armSpeed;
-	//motor[motorLauncherFive] = armSpeed;
+
+	// Bar control
+	int barSpeed = 0;
+	if (vexRT[Btn7R]) {
+		barSpeed = 127;
+	}
+	else
+		if (vexRT[Btn7L]) {
+		barSpeed = -127;
+	}
+	motor[motorBar] = barSpeed;
+	if (vexRT[Btn7U]) {
+		if (isBarReady()) {
+			startTask( barLongShot );
+		}
+	}
 }
