@@ -1,11 +1,17 @@
-// General LCD Handler
+// Title: General LCD Handler
+// Status: Unstable! Untested. 
+// Version: 1.0.0
 // Description:
+     A simple way to interact with LCDs cleanly and effectively
 
 // Uses globals:
 //  - Timer T4 for timings
 
 // Usage:
 //  - Call lcdInit() once in your main class
+
+// TODO:
+//  - Make general methods for g
 
 // ---------------------------------------Notes-------------------------------------------
 
