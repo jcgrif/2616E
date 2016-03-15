@@ -2,7 +2,7 @@
 // Status: Unstable! Untested. 
 // Version: 1.0.0
 // Description:
-     A simple way to interact with LCDs cleanly and effectively
+//  - A simple way to interact with LCDs cleanly and effectively
 
 // Uses globals:
 //  - Timer T4 for timings
@@ -38,7 +38,7 @@ bool cycles = true; // Make pages a continuous loop (loops to start when at the 
 
 // Data vars (Millis to 1milli accuracy)
 long lastRefresh = 0.0; // Last time we've refreshed in millis
-long refreshTime = 1500.0; // How many millis to wait before refreshing
+long refreshTime = 1500.0; // How many millis to wait before refreshing. Increments of 100ms minimum. 
 long holdStarted = 0.0; // Last time we've started a hold in millis
 long lastHoldTime = -1.0; // How long we held a button last time we did.
                           // NOTE: When interacting with this, make sure to check userInteraction
