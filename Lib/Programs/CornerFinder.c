@@ -14,8 +14,7 @@
 int threshold = 25; // How much of a gap is considered a reasonable change
 int checkWith = 1; // How many 1/10 degrees to check change
 int radarMovementSpeed = 60; // Max of 127, minimum of 1 (but realisticly, above 20)
-short distances[3600]; // Array to store a distance every 1/10 degree
-int initCheckTime = 100; // Ms to run the intital check for the gyro
+short distances[3601]; // Array to store a distance every 1/10 degree
 int checkTime = 25; // Ms to check the ultrasonic sensor. Pretty sure below 20 is too fast
 // for a cortex
 bool includeRadarSetupDelay = true; // Includes a 6 second delay to clear the field before
@@ -46,7 +45,7 @@ short getRadarValue() {
 // Outputs all keys and values for the distances array
 void printValues() {
 	writeDebugStreamLine("---- Printing all degrees! ----");
-	for(short degree = 0; 3600; degree++)
+	for(short degree = 1; 3601; degree++)
 	{
 		short distance = distances[degree];
 		if (distance == NULL || distance <= 0)
@@ -68,7 +67,7 @@ void clearLCD() {
 // The goal is to have no naked degrees
 void printNakedValues() {
 	writeDebugStreamLine("---- Printing all naked degrees! ----");
-	for(short degree = 0; 3600; degree++)
+	for(short degree = 1; 3601; degree++)
 	{
 		short distance = distances[degree];
 		if (distance == NULL || distance < 0)
@@ -81,14 +80,6 @@ void printNakedValues() {
 // # Methods for interacting with distances #
 // ##########################################
 
-// Checks if posOne is greater or less than pos two and returns it's results
-// True for moving positive, false for moving negative
-bool isMovingPositive(short posOne, short posTwo) {
-	if (posOne < posTwo) // Position one is greater than pos two, moving up.
-		return false;
-	else // Position one is less than pos two, moving down.
-		return true;
-}
 
 // ##################
 // # Radar movement #
@@ -190,13 +181,38 @@ task main()
 
 	// Analyze the data we gathered and get the corner's degrees from us
 	// TODO: Actually analyze the data for corners. Waiting to check the data returned before doing this
-	short currentPos = startPos; // Used to track our current pos since we're not using the real gyro anymore
+	// TODO: All of this needs to be tested... theoretical math
+	for (short i = 1; i < 719; i++) { // Read the ditance values and evaluate them (3600/5=720)
+		short thisSet[10];
+		short base = (i-1)*5;
+		for (short j = 0; j < 10; j++) {
+			thisSet[j] = distances[base+j];
+		}
 
-	for (short i = startPos; i < 3600; i++) { // Read data from startPos -> end of array
-
-	}
-	for (short i = 0; i < startPos+1; i++) { // Read data from 0 -> startPos
-
+		bool goingUp;
+		for (short j = 1; j < 9; j++) {
+			short firstDist = thisSet[j];
+			short lastDist = thisSet[j+1];
+			// These blocks might need to take into consideration that values aren't always perfect and use a threshold for checks
+			if (firstDist > lastDist) { // Going up
+				if (goingUp != NULL) {
+					if (goingUp == false) { // Went from going down to going up, we found a wall's closest point!
+						// Change in direction!
+						writeDebugStreamLine("Detected a wall at %i",firstDist);
+						j+=1;
+					}
+				} else goingUp = true;
+			}
+			if (firstDist < lastDist) { // Going down
+				if (goingUp != NULL) {
+					if (goingUp == true) { // Went from going up to going down, we found a corner!
+						// Change in direction!
+						writeDebugStreamLine("Detected a corner at %i",firstDist);
+						j+=1;
+					}
+				} else goingUp = false;
+			}
+		}
 	}
 
 	// Print out our results
