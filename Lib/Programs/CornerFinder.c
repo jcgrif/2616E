@@ -148,6 +148,7 @@ task main()
 	}
 
 	clearLCD();
+	startRadar();
 	displayLCDString(0,0,"Scanning field");
 	// This is the loop that gathers the values. It runs every checkTime ms,
 	// and checks the current gyro degree. It then sets the distance for distance[gyroDegree]
@@ -182,36 +183,30 @@ task main()
 	// Analyze the data we gathered and get the corner's degrees from us
 	// TODO: Actually analyze the data for corners. Waiting to check the data returned before doing this
 	// TODO: All of this needs to be tested... theoretical math
-	for (short i = 1; i < 719; i++) { // Read the ditance values and evaluate them (3600/5=720)
-		short thisSet[10];
-		short base = (i-1)*5;
-		for (short j = 0; j < 10; j++) {
-			thisSet[j] = distances[base+j];
-		}
-
+	for (short i = 1; i < 3601; i++) { // Read the ditance values and evaluate them
 		bool goingUp;
-		for (short j = 1; j < 9; j++) {
-			short firstDist = thisSet[j];
-			short lastDist = thisSet[j+1];
-			// These blocks might need to take into consideration that values aren't always perfect and use a threshold for checks
-			if (firstDist > lastDist) { // Going up
-				if (goingUp != NULL) {
-					if (goingUp == false) { // Went from going down to going up, we found a wall's closest point!
-						// Change in direction!
-						writeDebugStreamLine("Detected a wall at %i",firstDist);
-						j+=1;
-					}
-				} else goingUp = true;
-			}
-			if (firstDist < lastDist) { // Going down
-				if (goingUp != NULL) {
-					if (goingUp == true) { // Went from going up to going down, we found a corner!
-						// Change in direction!
-						writeDebugStreamLine("Detected a corner at %i",firstDist);
-						j+=1;
-					}
-				} else goingUp = false;
-			}
+		short firstDist = distances[i];
+		short lastDist = distances[i+1];
+		// These blocks might need to take into consideration that values aren't always perfect and use a threshold for checks
+		if (firstDist > lastDist) { // Going up
+			if (goingUp != NULL) {
+				if (goingUp == false) { // Went from going down to going up, we found a wall's closest point!
+					// Change in direction!
+					writeDebugStreamLine("Detected a wall at %i",firstDist);
+					goingUp = true;
+					j+=1;
+				}
+			} else goingUp = true; // We havent yet set a direction we're going
+		}
+		if (firstDist < lastDist) { // Going down
+			if (goingUp != NULL) {
+				if (goingUp == true) { // Went from going up to going down, we found a corner!
+					// Change in direction!
+					writeDebugStreamLine("Detected a corner at %i",firstDist);
+					goingUp = false;
+					j+=1;
+				}
+			} else goingUp = false; // We havent yet set a direction we're going
 		}
 	}
 
