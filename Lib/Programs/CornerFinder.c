@@ -14,7 +14,7 @@
 int threshold = 25; // How much of a gap is considered a reasonable change
 int checkWith = 1; // How many 1/10 degrees to check change
 int radarMovementSpeed = 60; // Max of 127, minimum of 1 (but realisticly, above 20)
-short distances[3601]; // Array to store a distance every 1/10 degree
+short distances[3601]; // Array to store a distance every 1/10 degree. 1 short oversized to accomidate for the values the gyro outputs
 int checkTime = 25; // Ms to check the ultrasonic sensor. Pretty sure below 20 is too fast
 // for a cortex
 bool includeRadarSetupDelay = true; // Includes a 6 second delay to clear the field before
