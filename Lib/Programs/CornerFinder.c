@@ -18,6 +18,9 @@ short distances[3600]; // Array to store a distance every 1/10 degree
 int initCheckTime = 100; // Ms to run the intital check for the gyro
 int checkTime = 25; // Ms to check the ultrasonic sensor. Pretty sure below 20 is too fast
 // for a cortex
+bool includeRadarSetupDelay = true; // Includes a 6 second delay to clear the field before
+// the program starts scanning with it's radar. Good idea to disable if you're remotely starting,
+// good idea to enable if you're manually turning it on
 
 // ######################
 // # Sensor interaction #
@@ -52,6 +55,12 @@ void printValues() {
 			writeDebugStreamLine("Degree: %i. Distance: %i.",degree,distance);
 	}
 	writeDebugStreamLine("---- End of degrees! ----");
+}
+
+// Clears whole LCD
+void clearLCD() {
+	clearLCDLine(0);
+	clearLCDLine(1);
 }
 
 // Basically the same as printValues(), but only printing those missing a value
@@ -103,16 +112,58 @@ void stopRadar() {
 // ################
 // # Main control #
 // ################
+task printSensorValues() {
+	clearLCD();
+	// Simply displaying number after text to avoid the annoyance
+	// of concatenating a number to a string
+	displayLCDString(0,0,"RNG:");
+	displayLCDNumber(0,4,getRadarValue());
+	displayLCDString(1,0,"GYRO:");
+	displayLCDNumber(1,5,getRadarValue());
+}
+
 task main()
 {
-	// Give sensors like the gyro time to calibrate themselves
-	wait1Msec(2000);
+	bLCDBacklight = true;
+	clearLCD();
+	displayLCDString(0,0,"Gyro setup");
+	displayLCDCenteredString(1,"DONT TOUCH ROBOT");
+
+	// Give sensors like the gyro time to calibrate themselves,
+	// and give pretty ellipse on the lcd
+	wait1Msec(500);
+	displayLCDString(0,10,".");
+	wait1MSec(500);
+	displayLCDString(0,11,".");
+	wait1MSec(500);
+	displayLCDString(0,12,".");
+	wait1MSec(500);
+
+	// If we want this delay...
+	if (includeRadarSetupDelay) {
+		clearLCD();
+		displayLCDString(0,0,"Radar setup");
+		displayLCDCenteredString(1,"CLEAR THE FIELD");
+
+		// Give people time to clear the field
+		// and give pretty ellipse on the lcd
+		wait1Msec(1500);
+		displayLCDString(0,11,".");
+		wait1MSec(1500);
+		displayLCDString(0,12,".");
+		wait1MSec(1500);
+		displayLCDString(0,13,".");
+		wait1MSec(1500);
+	}
 
 	// This block could/should be placed with a moreactive checking.
 	// Basically, check the incoming numbers during the 100ms and make sure
 	//  direction doesn't change, for example if we pass a corner in this check.
 	//  If the direction changes, reset the check and tag on more time.
 	// For now make sure when testing you're aimed in the middle of a wall
+	clearLCD();
+	displayLCDString(0,0,"Radar setup is");
+	displayLCDCenteredString(1,0,"now running...");
 	int checkStartPos = getGyroValue();
 	startRadar();
 	wait1Msec(initCheckTime);
@@ -121,6 +172,8 @@ task main()
 	bool startedPositive, movingPositive = isMovingPositive(checkStartPos, checkStopPos);
 	bool backToZero = false;
 
+	clearLCD();
+	displayLCDString(0,0,"Scanning field");
 	// This is the loop that gathers the values. It runs every checkTime ms,
 	// and checks the current gyro degree. It then sets the distance for distance[gyroDegree]
 	// if one does not already exist
@@ -144,6 +197,10 @@ task main()
 		short thisValue = distances[getGyroValue()]; // Get the current value for this degree
 		if (thisValue == NULL || thisValue <= 0) { // If this value hasn't been properly set
 			distances[getGyroValue()] = getRadarValue();
+			clearLCDLine(1);
+			displayLCDCenteredString(1,"->");
+			displayLCDNumber(1,0,getGyroValue());
+			displayLCDNumber(1,10,getRadarValue());
 		}
 
 		// Delay so we don't read too fast
@@ -168,6 +225,7 @@ task main()
 
 	// Give user control and print sensor values so they can check the data to real life
 	// 8L -> Turn left, 8R -> Turn right (Radar)
+	startTask(printSensorValues);
 	while (true) {
 		if (vexRT[Btn8R]) {
 			startRadar();
