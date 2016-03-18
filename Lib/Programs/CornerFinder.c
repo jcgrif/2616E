@@ -71,7 +71,7 @@ void printNakedValues() {
 	for(short degree = 0; 3600; degree++)
 	{
 		short distance = distances[degree];
-		if (distance == NULL || distance < 0) 
+		if (distance == NULL || distance < 0)
 			writeDebugStreamLine("Degree: %i. No distance set or less than 0.",degree);
 	}
 	writeDebugStreamLine("---- End of naked degrees! ----");
@@ -106,7 +106,7 @@ void moveRadarReverse() {
 
 // Stops the radar's movement
 void stopRadar() {
-	motor[motorRadar] = 0;	
+	motor[motorRadar] = 0;
 }
 
 // ################
@@ -133,11 +133,11 @@ task main()
 	// and give pretty ellipse on the lcd
 	wait1Msec(500);
 	displayLCDString(0,10,".");
-	wait1MSec(500);
+	wait1Msec(500);
 	displayLCDString(0,11,".");
-	wait1MSec(500);
+	wait1Msec(500);
 	displayLCDString(0,12,".");
-	wait1MSec(500);
+	wait1Msec(500);
 
 	// If we want this delay...
 	if (includeRadarSetupDelay) {
@@ -149,48 +149,29 @@ task main()
 		// and give pretty ellipse on the lcd
 		wait1Msec(1500);
 		displayLCDString(0,11,".");
-		wait1MSec(1500);
+		wait1Msec(1500);
 		displayLCDString(0,12,".");
-		wait1MSec(1500);
+		wait1Msec(1500);
 		displayLCDString(0,13,".");
-		wait1MSec(1500);
+		wait1Msec(1500);
 	}
-
-	// This block could/should be placed with a moreactive checking.
-	// Basically, check the incoming numbers during the 100ms and make sure
-	//  direction doesn't change, for example if we pass a corner in this check.
-	//  If the direction changes, reset the check and tag on more time.
-	// For now make sure when testing you're aimed in the middle of a wall
-	clearLCD();
-	displayLCDString(0,0,"Radar setup is");
-	displayLCDCenteredString(1,0,"now running...");
-	int checkStartPos = getGyroValue();
-	startRadar();
-	wait1Msec(initCheckTime);
-	stopRadar();
-	int startPos,checkStopPos = getGyroValue();
-	bool startedPositive, movingPositive = isMovingPositive(checkStartPos, checkStopPos);
-	bool backToZero = false;
 
 	clearLCD();
 	displayLCDString(0,0,"Scanning field");
 	// This is the loop that gathers the values. It runs every checkTime ms,
 	// and checks the current gyro degree. It then sets the distance for distance[gyroDegree]
 	// if one does not already exist
+	short lastPos = -1;
 	while (true) {
 		// Check if we've done a full rotation. If so, break the loop
 		short gyroPos = getGyroValue();
 		// If we're above or at our start pos
-		if (gyroPos >= startPos) {
+		if (gyroPos >= lastPos) {
 			// If we've already gone to 0 and up again
-			if (backToZero) {
-				// We've gone 360 deg, time to run calculations
-				stopRadar();
-				break;
-			}
-			} else if (!backToZero) { // We're below start and backToZero is false
-			// We've gone back to zero
-			backToZero = true;
+			lastPos = gyroPos;
+			} else { // We're back to 0!
+			stopRadar();
+			break;
 		}
 
 		// Check if this degree has a distance yet. If not, set it
@@ -210,7 +191,6 @@ task main()
 	// Analyze the data we gathered and get the corner's degrees from us
 	// TODO: Actually analyze the data for corners. Waiting to check the data returned before doing this
 	short currentPos = startPos; // Used to track our current pos since we're not using the real gyro anymore
-	movingPositive = startedPositive; // Reset movingPositive to startedPositive
 
 	for (short i = startPos; i < 3600; i++) { // Read data from startPos -> end of array
 
